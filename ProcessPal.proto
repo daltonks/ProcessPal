@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "ProcessPal.Server";
+option csharp_namespace = "ProcessPal.Generated";
 
 package automation;
 

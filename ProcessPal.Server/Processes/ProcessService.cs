@@ -1,4 +1,5 @@
-﻿using ProcessPal.Server.Util;
+﻿using ProcessPal.Generated;
+using ProcessPal.Server.Util;
 
 namespace ProcessPal.Server.Processes;
 

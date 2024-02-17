@@ -1,4 +1,5 @@
 using Grpc.Core;
+using ProcessPal.Generated;
 
 namespace ProcessPal.Server.Processes;
 

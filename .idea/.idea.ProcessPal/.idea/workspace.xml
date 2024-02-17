@@ -11,23 +11,20 @@
   <component name="ChangeListManager">
     <list default="true" id="5df52449-eb69-43e9-ba1d-9bf9b53894a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProcessPal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProcessPal/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Client.CLI/ProcessPal.Client.CLI.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Client.CLI/Program.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Client.CLI/appsettings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Client/ProcessPal.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Client/ProcessPal.Client.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Core/ProcessPal.Core.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Core/Protos/process.proto" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Config.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/ProcessPal.Server.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/ProcessPal.Server.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProcessPal.Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Client/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessControllerImpl.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessControllerImpl.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/settings.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/ProcessPal.sln" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/process.proto" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.proto" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/ProcessPal.Client/obj/Debug/net8.0/Process.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ProcessPal.Server/obj/Debug/net8.0/Process-palGrpc.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -68,11 +65,11 @@
     ]
   }
 }]]></component>
-  <component name="RunManager" selected="Publish to folder.Publish Windows Client">
+  <component name="RunManager" selected="Publish to folder.Publish Windows Server">
     <list>
       <item itemvalue=".NET Launch Settings Profile.ProcessPal.Server" />
       <item itemvalue=".NET Project.ProcessPal.Client" />
-      <item itemvalue="Publish to folder.Publish Server Windows" />
+      <item itemvalue="Publish to folder.Publish Windows Server" />
       <item itemvalue="Publish to folder.Publish Windows Client" />
     </list>
   </component>
@@ -84,7 +81,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1708213024061</updated>
-      <workItem from="1708213026226" duration="548000" />
+      <workItem from="1708213026226" duration="968000" />
     </task>
     <servers />
   </component>

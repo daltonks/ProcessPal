@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
-using ProcessPal.Server;
 using Grpc.Net.Client;
 using Polly;
 using ProcessPal.Client;
+using ProcessPal.Generated;
 
 Config config;
 await using (var fileStream = File.OpenRead("config.json"))
