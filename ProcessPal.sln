@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessPal.Server", "ProcessPal.Server\ProcessPal.Server.csproj", "{B18C8C53-F17E-414B-88B2-338CB46B4468}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessPal.Client", "ProcessPal.Client\ProcessPal.Client.csproj", "{1B49F3BA-A444-47BC-AC25-AC10BD361B14}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protos", "Protos", "{91EC66CC-4E56-4569-9AE5-4D7C92697CB8}"
+	ProjectSection(SolutionItems) = preProject
+		process.proto = process.proto
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B18C8C53-F17E-414B-88B2-338CB46B4468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B18C8C53-F17E-414B-88B2-338CB46B4468}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B18C8C53-F17E-414B-88B2-338CB46B4468}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B18C8C53-F17E-414B-88B2-338CB46B4468}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B49F3BA-A444-47BC-AC25-AC10BD361B14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B49F3BA-A444-47BC-AC25-AC10BD361B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B49F3BA-A444-47BC-AC25-AC10BD361B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B49F3BA-A444-47BC-AC25-AC10BD361B14}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

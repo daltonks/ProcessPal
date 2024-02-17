@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProcessPal.Server";
+
+package automation;
+
+service ProcessController {
+  rpc ToggleProcessGroup (ToggleProcessGroupRequest) returns (ToggleProcessGroupResponse);
+  rpc Shutdown (ShutdownRequest) returns (ShutdownResponse);
+}
+
+message ToggleProcessGroupRequest {
+  string name = 1;
+}
+
+message ToggleProcessGroupResponse {
+
+}
+
+message ShutdownRequest {
+  
+}
+
+message ShutdownResponse {
+  
+}
