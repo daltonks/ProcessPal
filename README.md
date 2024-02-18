@@ -4,8 +4,9 @@ ProcessPal allows you to easily spin up, tear down, and automatically restart gr
 
 # Getting Started
 
+1. Install the [.NET 8 SDK or runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 1. Download and extract the zip for your operating system from the [releases](https://github.com/daltonks/ProcessPal/releases) page.
-2. In the extracted directory, create the file `_config.json`.
+1. In the extracted directory, create the file `_config.json`.
   
    Example:
    ```json
@@ -29,7 +30,7 @@ ProcessPal allows you to easily spin up, tear down, and automatically restart gr
     }
    ```
 
-3. In a terminal, run the ProcessPal executable to see the CLI options.
+1. In a terminal, run the ProcessPal executable to see the CLI options.
    
    On Windows, this is `ProcessPal.exe`.
 
