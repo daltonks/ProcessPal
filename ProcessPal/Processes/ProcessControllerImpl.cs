@@ -26,10 +26,10 @@ public class ProcessControllerImpl : ProcessController.ProcessControllerBase
         return await _processService.ToggleProcessGroupAsync(request);
     }
 
-    public override Task<ShutdownResponse> Shutdown(ShutdownRequest request, ServerCallContext context)
+    public override async Task<ShutdownResponse> Shutdown(ShutdownRequest request, ServerCallContext context)
     {
-        _processService.StopAllGroups();
+        await _processService.StopAllGroupsAsync();
         _hostApplicationLifetime.StopApplication();
-        return Task.FromResult(new ShutdownResponse());
+        return new ShutdownResponse();
     }
 }

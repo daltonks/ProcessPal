@@ -42,11 +42,14 @@ public class ProcessService
         });
     }
 
-    public void StopAllGroups()
+    public async Task StopAllGroupsAsync()
     {
-        foreach (var group in _processGroups.Values)
+        await _taskQueue.RunAsync(() =>
         {
-            group.Stop();
-        }
+            foreach (var group in _processGroups.Values)
+            {
+                group.Stop();
+            }
+        });
     }
 }
