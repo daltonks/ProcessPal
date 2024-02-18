@@ -1,7 +1,7 @@
 ﻿using ProcessPal.Generated;
-using ProcessPal.Server.Util;
+using ProcessPal.Util;
 
-namespace ProcessPal.Server.Processes;
+namespace ProcessPal.Processes;
 
 public class ProcessService : IDisposable
 {

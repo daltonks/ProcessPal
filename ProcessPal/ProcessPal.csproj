@@ -6,10 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\*.proto" GrpcServices="Server" />
+        <Protobuf Include="*.proto" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommandLineParser" Version="2.9.1" />
         <PackageReference Include="Google.Protobuf" Version="3.25.3" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.60.0" />
         <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
@@ -17,6 +18,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Polly" Version="8.3.0" />
     </ItemGroup>
 
 </Project>

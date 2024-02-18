@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ProcessPal.Server.Util
+namespace ProcessPal.Util
 {
     public class TaskQueue
     {

@@ -1,6 +1,6 @@
 ﻿<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ProcessPal.Server" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
-    <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ProcessPal.Server/ProcessPal.Server.csproj" />
+  <configuration default="false" name="ProcessPal: ProcessPal.Server" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+    <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ProcessPal/ProcessPal.csproj" />
     <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
     <option name="LAUNCH_PROFILE_NAME" value="ProcessPal.Server" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />

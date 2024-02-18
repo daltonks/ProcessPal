@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace ProcessPal.Client;
+namespace ProcessPal;
 
 [Verb("toggle", aliases: new []{ "t" }, HelpText = "Toggle a process group.")]
 public class ToggleOptions

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ProcessPal.Server.Processes;
+namespace ProcessPal.Processes;
 
 class ProcessInfo
 {

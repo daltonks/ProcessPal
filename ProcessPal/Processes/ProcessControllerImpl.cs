@@ -1,7 +1,7 @@
 using Grpc.Core;
 using ProcessPal.Generated;
 
-namespace ProcessPal.Server.Processes;
+namespace ProcessPal.Processes;
 
 public class ProcessControllerImpl : ProcessController.ProcessControllerBase
 {

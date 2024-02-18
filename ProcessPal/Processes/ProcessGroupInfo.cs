@@ -1,4 +1,4 @@
-﻿namespace ProcessPal.Server.Processes;
+﻿namespace ProcessPal.Processes;
 
 class ProcessGroupInfo
 {

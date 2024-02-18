@@ -1,4 +1,4 @@
-﻿namespace ProcessPal.Server;
+﻿namespace ProcessPal;
 
 public class Config
 {
