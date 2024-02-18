@@ -1,6 +1,11 @@
 # ProcessPal
 
-ProcessPal allows you to easily spin up, tear down, and automatically restart groups of processes through a CLI, which can be handy when paired with a Stream Deck.
+ProcessPal allows you to easily spin up, tear down, and automatically restart groups of processes through a CLI.
+
+I personally use it for running and debugging multiple code projects at once:
+- Using the ProcessPal CLI with my Stream Deck, I spin up and tear down the processes
+- If a process crashes, the `RestartOnExit` option will start the process again
+- In my IDE, I can debug by attaching to the processes
 
 # Getting Started
 
