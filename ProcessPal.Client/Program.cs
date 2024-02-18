@@ -7,12 +7,12 @@ using ProcessPal.Client;
 using ProcessPal.Generated;
 
 Config config;
-await using (var fileStream = File.OpenRead("_client config.json"))
+await using (var fileStream = File.OpenRead("_config.json"))
 {
     config = JsonSerializer.Deserialize<Config>(fileStream);
 }
 
-using var channel = GrpcChannel.ForAddress($"http://localhost:{config.ServerPort}");
+using var channel = GrpcChannel.ForAddress($"http://localhost:{config.Port}");
 var client = new ProcessController.ProcessControllerClient(channel);
 
 var retryPolicy = Policy

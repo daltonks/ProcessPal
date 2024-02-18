@@ -10,8 +10,8 @@ public class ProcessService : IDisposable
 
     public ProcessService(Config config)
     {
-        _processGroups = config.ProcessGroups
-            .ToDictionary(x => x.Name, x => new ProcessGroupInfo(x));
+        _processGroups = config.ProcessGroups?.ToDictionary(x => x.Name, x => new ProcessGroupInfo(x)) 
+                         ?? new Dictionary<string, ProcessGroupInfo>();
     }
 
     public async Task<ToggleProcessGroupResponse> ToggleProcessGroupAsync(ToggleProcessGroupRequest request)

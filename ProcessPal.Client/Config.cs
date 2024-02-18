@@ -2,5 +2,5 @@
 
 public class Config
 {
-    public int ServerPort { get; set; }
+    public int Port { get; set; }
 }

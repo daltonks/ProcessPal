@@ -14,7 +14,7 @@ message ToggleProcessGroupRequest {
 }
 
 message ToggleProcessGroupResponse {
-
+  
 }
 
 message ShutdownRequest {
