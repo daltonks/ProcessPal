@@ -5,7 +5,7 @@ ProcessPal allows you to easily spin up, tear down, and automatically restart gr
 I personally use it for running and debugging multiple code projects at once:
 - Using the ProcessPal CLI with my Stream Deck, I spin up and tear down the processes
 - If a process crashes, the `RestartOnExit` option will start the process again
-- In my IDE, I attach debuggers to the processes
+- In my IDE, I can debug by attaching to the processes
 
 # Getting Started
 
