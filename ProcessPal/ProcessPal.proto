@@ -14,7 +14,14 @@ message ToggleProcessGroupRequest {
 }
 
 message ToggleProcessGroupResponse {
-  
+    ToggleProcessGroupStatus status = 1;
+}
+
+enum ToggleProcessGroupStatus {
+  Unknown = 0;
+  Started = 1;
+  Stopped = 2;
+  NotFound = 3;
 }
 
 message ShutdownRequest {

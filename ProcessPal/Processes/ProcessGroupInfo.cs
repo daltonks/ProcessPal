@@ -3,7 +3,7 @@
 class ProcessGroupInfo
 {
     private readonly ProcessInfo[] _processes;
-    private bool AnyProcessesRunning => _processes.Any(x => x.IsRunning);
+    public bool AnyProcessesRunning => _processes.Any(x => x.IsRunning);
     
     public ProcessGroupInfo(ProcessConfig[] processConfigs)
     {
@@ -25,18 +25,6 @@ class ProcessGroupInfo
         foreach (var process in _processes)
         {
             process.Stop();
-        }
-    }
-    
-    public void Toggle()
-    {
-        if (AnyProcessesRunning)
-        {
-            Stop();
-        }
-        else
-        {
-            Start();
         }
     }
 }

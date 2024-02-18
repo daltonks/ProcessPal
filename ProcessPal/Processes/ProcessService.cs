@@ -16,13 +16,29 @@ public class ProcessService
 
     public async Task<ToggleProcessGroupResponse> ToggleProcessGroupAsync(ToggleProcessGroupRequest request)
     {
-        return await _taskQueue.RunAsync(() => {
+        return await _taskQueue.RunAsync(() =>
+        {
+            var response = new ToggleProcessGroupResponse();
+            
             if (_processGroups.TryGetValue(request.Name, out var processGroup))
             {
-                processGroup.Toggle();
+                if(processGroup.AnyProcessesRunning)
+                {
+                    processGroup.Stop();
+                    response.Status = ToggleProcessGroupStatus.Stopped;
+                }
+                else
+                {
+                    processGroup.Start();
+                    response.Status = ToggleProcessGroupStatus.Started;
+                }
+            }
+            else
+            {
+                response.Status = ToggleProcessGroupStatus.NotFound;
             }
             
-            return new ToggleProcessGroupResponse();
+            return response;
         });
     }
 

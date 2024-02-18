@@ -37,8 +37,7 @@ internal class Program
 
         parserResult.WithParsed<ToggleGroupOptions>(options =>
         {
-            var toggleRequest = new ToggleProcessGroupRequest { Name = options.Name };
-            result = SendToServer(client => client.ToggleProcessGroup(toggleRequest)) ? 0 : 1;
+            result = ToggleProcessGroup(options) ? 0 : 1;
         });
 
         return result;
@@ -86,6 +85,27 @@ internal class Program
         app.Run();
 
         return true;
+    }
+
+    private static bool ToggleProcessGroup(ToggleGroupOptions options)
+    {
+        var toggleRequest = new ToggleProcessGroupRequest { Name = options.Name };
+        return SendToServer(client =>
+        {
+            var response = client.ToggleProcessGroup(toggleRequest);
+            switch (response.Status)
+            {
+                case ToggleProcessGroupStatus.Started:
+                    Console.WriteLine($"Started process group \"{options.Name}\"");
+                    break;
+                case ToggleProcessGroupStatus.Stopped:
+                    Console.WriteLine($"Stopped process group \"{options.Name}\"");
+                    break;
+                case ToggleProcessGroupStatus.NotFound:
+                    Console.WriteLine($"Couldn't find process group \"{options.Name}\"");
+                    break;
+            }
+        });
     }
     
     private static bool SendToServer(Action<ProcessController.ProcessControllerClient> action, bool handleExceptions = true)
