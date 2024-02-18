@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using CommandLine;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Polly;
 using ProcessPal.Client;
@@ -21,18 +23,25 @@ await retryPolicy.ExecuteAsync(async () =>
 {
     try
     {
-        switch (args[0])
+        var parserResult = Parser.Default.ParseArguments(args, typeof(ToggleOptions), typeof(ShutdownOptions));
+        
+        await parserResult.WithParsedAsync<ToggleOptions>(async options =>
         {
-            case "toggle":
+            var toggleRequest = new ToggleProcessGroupRequest { Name = options.Name };
+            await client.ToggleProcessGroupAsync(toggleRequest);
+        });
+        
+        await parserResult.WithParsedAsync<ShutdownOptions>(async options =>
+        {
+            try
             {
-                var toggleRequest = new ToggleProcessGroupRequest { Name = args[1] };
-                await client.ToggleProcessGroupAsync(toggleRequest);
-                break;
-            }
-            case "shutdown":
                 await client.ShutdownAsync(new ShutdownRequest());
-                break;
-        }
+            }
+            catch (Exception ex) when (ex is RpcException { StatusCode: StatusCode.Unavailable })
+            {
+                // Ignore, server is probably already shutdown
+            }
+        });
     }
     catch (Exception ex)
     {

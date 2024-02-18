@@ -11,11 +11,11 @@
   <component name="ChangeListManager">
     <list default="true" id="5df52449-eb69-43e9-ba1d-9bf9b53894a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProcessPal/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProcessPal/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProcessPal.Client/ProcessPal.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Client/ProcessPal.Client.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProcessPal.Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Client/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessControllerImpl.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessControllerImpl.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProcessPal.sln" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/process.proto" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Config.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessGroupInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessGroupInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ProcessPal.Server/Processes/ProcessInfo.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +23,10 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/bf5e279d9239bfef5bb1b8d6212f1b971c434606/src/libraries/System.Diagnostics.Process/src/System/Diagnostics/ProcessStartInfo.Win32.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7a7e1a6bfc927c5ef485364da488febc2fdcf16347af288cf5916c295d3f0/Parser.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b83ff94883e798141ca16317af68ff9bec5ab6eaddffe45d659aa3e20c830/OptionAttribute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ed68c0129aa18f1ba54c1e7ea7a9dc7eb75475edc9867a5f5a81497b9c74d/BaseAttribute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ProcessPal.Client/obj/Debug/net8.0/Process.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ProcessPal.Server/obj/Debug/net8.0/Process-palGrpc.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -34,6 +38,9 @@
   "associatedIndex": 3
 }]]></component>
   <component name="ProjectId" id="2cW2TWKhDU6GeeOXaLVzWkoG3qq" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -46,6 +53,7 @@
     "AzureAzuriteLocation": "",
     "Publish to folder.Publish Server Windows.executor": "Run",
     "Publish to folder.Publish Windows Client.executor": "Run",
+    "Publish to folder.Publish Windows Server.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ignore.virus.scanning.warn.message": "true",
@@ -65,7 +73,7 @@
     ]
   }
 }]]></component>
-  <component name="RunManager" selected="Publish to folder.Publish Windows Server">
+  <component name="RunManager" selected="Publish to folder.Publish Windows Client">
     <list>
       <item itemvalue=".NET Launch Settings Profile.ProcessPal.Server" />
       <item itemvalue=".NET Project.ProcessPal.Client" />
@@ -81,7 +89,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1708213024061</updated>
-      <workItem from="1708213026226" duration="968000" />
+      <workItem from="1708213026226" duration="3994000" />
     </task>
     <servers />
   </component>

@@ -14,7 +14,7 @@ public class ProcessGroupConfig
 
 public class ProcessConfig
 {
-    public string ScriptName { get; set; }
+    public string FileName { get; set; }
     public string Args { get; set; }
     public bool RestartOnExit { get; set; }
 }

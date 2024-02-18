@@ -2,13 +2,11 @@
 
 class ProcessGroupInfo
 {
-    private ProcessGroupConfig _config;
     private readonly ProcessInfo[] _processes;
     private bool _isRunning;
     
     public ProcessGroupInfo(ProcessGroupConfig config)
     {
-        _config = config;
         _processes = config.Processes
             .Select(x => new ProcessInfo(x))
             .ToArray();

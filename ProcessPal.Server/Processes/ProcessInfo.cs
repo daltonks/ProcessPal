@@ -43,27 +43,12 @@ class ProcessInfo
         {
             if (Process == null)
             {
-                var scriptPath = Path.Combine(AppContext.BaseDirectory, _config.ScriptName);
-                
-                ProcessStartInfo startInfo;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    startInfo = new ProcessStartInfo
-                    {
-                        FileName = "powershell.exe",
-                        Arguments = $"-File \"{scriptPath}\" " + _config.Args,
-                        UseShellExecute = true
-                    };
-                }
-                else
-                {
-                    startInfo = new ProcessStartInfo
-                    {
-                        FileName = "bash",
-                        Arguments = $"\"{scriptPath}\" " + _config.Args,
-                        UseShellExecute = true
-                    };
-                }
+                    FileName = _config.FileName,
+                    Arguments = _config.Args,
+                    UseShellExecute = true
+                };
 
                 Process = Process.Start(startInfo);
                 Process!.EnableRaisingEvents = true;
