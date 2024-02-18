@@ -33,3 +33,5 @@ To start:
 3. For Windows, run `ProcessPal.exe` in a terminal to see the CLI options.
    
    For Mac, run `ProcessPal` in a terminal to see the CLI options.
+
+   Windows PowerShell example: `./ProcessPal.exe toggle -n RunTwoTestScripts`
