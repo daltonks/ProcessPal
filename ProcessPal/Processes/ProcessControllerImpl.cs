@@ -28,6 +28,7 @@ public class ProcessControllerImpl : ProcessController.ProcessControllerBase
 
     public override Task<ShutdownResponse> Shutdown(ShutdownRequest request, ServerCallContext context)
     {
+        _processService.StopAllGroups();
         _hostApplicationLifetime.StopApplication();
         return Task.FromResult(new ShutdownResponse());
     }

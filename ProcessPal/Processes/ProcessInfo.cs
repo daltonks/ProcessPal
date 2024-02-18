@@ -13,12 +13,13 @@ class ProcessInfo
     }
         
     public Process Process { get; private set; }
+    public bool IsRunning => Process != null;
 
     public void Start()
     {
         lock (_locker)
         {
-            if (Process == null)
+            if (!IsRunning)
             {
                 Toggle();
             }
@@ -29,7 +30,7 @@ class ProcessInfo
     {
         lock (_locker)
         {
-            if (Process != null)
+            if (IsRunning)
             {
                 Toggle();
             }
@@ -40,9 +41,15 @@ class ProcessInfo
     {
         lock (_locker)
         {
-            if (Process == null)
+            if (IsRunning)
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                Process.Exited -= OnProcessExited;
+                Process.Kill(entireProcessTree: true);
+                Process = null;
+            }
+            else
+            {
+                var startInfo = new ProcessStartInfo
                 {
                     FileName = _config.FileName,
                     Arguments = _config.Args,
@@ -52,12 +59,6 @@ class ProcessInfo
                 Process = Process.Start(startInfo);
                 Process!.EnableRaisingEvents = true;
                 Process.Exited += OnProcessExited;
-            }
-            else
-            {
-                Process.Exited -= OnProcessExited;
-                Process.Kill(entireProcessTree: true);
-                Process = null;
             }
         }
     }

@@ -3,7 +3,7 @@
 class ProcessGroupInfo
 {
     private readonly ProcessInfo[] _processes;
-    private bool _isRunning;
+    private bool AnyProcessesRunning => _processes.Any(x => x.IsRunning);
     
     public ProcessGroupInfo(ProcessConfig[] processConfigs)
     {
@@ -14,41 +14,29 @@ class ProcessGroupInfo
 
     public void Start()
     {
-        if (_isRunning)
+        foreach (var process in _processes)
         {
-            return;
+            process.Start();
         }
-        
-        Toggle();
     }
 
     public void Stop()
     {
-        if (!_isRunning)
+        foreach (var process in _processes)
         {
-            return;
+            process.Stop();
         }
-        
-        Toggle();
     }
     
     public void Toggle()
     {
-        if (_isRunning)
+        if (AnyProcessesRunning)
         {
-            foreach (var process in _processes)
-            {
-                process.Stop();
-            }
+            Stop();
         }
         else
         {
-            foreach (var process in _processes)
-            {
-                process.Start();
-            }
+            Start();
         }
-
-        _isRunning = !_isRunning;
     }
 }

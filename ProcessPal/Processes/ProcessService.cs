@@ -3,7 +3,7 @@ using ProcessPal.Util;
 
 namespace ProcessPal.Processes;
 
-public class ProcessService : IDisposable
+public class ProcessService
 {
     private readonly Dictionary<string, ProcessGroupInfo> _processGroups;
     private readonly TaskQueue _taskQueue = new();
@@ -26,7 +26,7 @@ public class ProcessService : IDisposable
         });
     }
 
-    public void Dispose()
+    public void StopAllGroups()
     {
         foreach (var group in _processGroups.Values)
         {
