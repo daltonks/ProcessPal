@@ -4,7 +4,7 @@ using ProcessPal.Server;
 using ProcessPal.Server.Processes;
 
 Config config;
-await using (var fileStream = File.OpenRead("config.json"))
+await using (var fileStream = File.OpenRead("_server config.json"))
 {
     config = JsonSerializer.Deserialize<Config>(fileStream);
 }
