@@ -29,9 +29,7 @@ await retryPolicy.ExecuteAsync(async () =>
         await parserResult.WithParsedAsync<ToggleOptions>(async options =>
         {
             var toggleRequest = new ToggleProcessGroupRequest { Name = options.Name };
-            var runServerTask = UseServerAsync();
             await RunAsync(client => client.ToggleProcessGroup(toggleRequest));
-            await runServerTask;
         });
         
         await parserResult.WithParsedAsync<ShutdownOptions>(async options =>
@@ -54,31 +52,6 @@ await retryPolicy.ExecuteAsync(async () =>
 });
 
 return;
-
-async Task UseServerAsync()
-{
-    var portInUse = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners()
-        .Any(x => x.Port == config.Port);
-
-    if (!portInUse)
-    {
-        var builder = WebApplication.CreateBuilder(args);
-        builder.WebHost.ConfigureKestrel(serverOptions =>
-        {
-            serverOptions.Listen(IPAddress.Loopback, config.Port, listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
-        });
-
-        var services = builder.Services;
-        services.AddGrpc();
-        services.AddSingleton(config);
-        services.AddSingleton<ProcessService>();
-
-        var app = builder.Build();
-        app.MapGrpcService<ProcessControllerImpl>();
-
-        await app.RunAsync();
-    }
-}
 
 async Task RunAsync(Action<ProcessController.ProcessControllerClient> action, bool startServerIfNotRunning = true)
 {
