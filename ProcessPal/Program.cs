@@ -16,7 +16,7 @@ internal class Program
     
     public static int Main(string[] args)
     {
-        using (var fileStream = File.OpenRead("_config.json"))
+        using (var fileStream = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "_config.json")))
         {
             _config = JsonSerializer.Deserialize<Config>(fileStream);
         }
