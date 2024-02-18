@@ -9,7 +9,7 @@ I personally use it for running and debugging multiple code projects at once:
 
 # Getting Started
 
-1. Install the [.NET 8 SDK or runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+1. Install the [.NET 8 runtime or SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 1. Download and extract the zip for your operating system from the [releases](https://github.com/daltonks/ProcessPal/releases) page.
 1. In the extracted directory, create the file `_config.json`.
   
