@@ -19,7 +19,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 var services = builder.Services;
 services.AddGrpc();
-services.AddSingleton<Config>();
+services.AddSingleton(config);
 services.AddSingleton<ProcessService>();
 
 var app = builder.Build();

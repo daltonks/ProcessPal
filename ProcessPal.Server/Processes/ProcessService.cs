@@ -10,7 +10,7 @@ public class ProcessService : IDisposable
 
     public ProcessService(Config config)
     {
-        _processGroups = config.ProcessGroups?.ToDictionary(x => x.Name, x => new ProcessGroupInfo(x)) 
+        _processGroups = config.ProcessGroups?.ToDictionary(x => x.Key, x => new ProcessGroupInfo(x.Value)) 
                          ?? new Dictionary<string, ProcessGroupInfo>();
     }
 

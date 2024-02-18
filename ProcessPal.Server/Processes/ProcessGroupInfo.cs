@@ -5,9 +5,9 @@ class ProcessGroupInfo
     private readonly ProcessInfo[] _processes;
     private bool _isRunning;
     
-    public ProcessGroupInfo(ProcessGroupConfig config)
+    public ProcessGroupInfo(ProcessConfig[] processConfigs)
     {
-        _processes = config.Processes
+        _processes = processConfigs
             .Select(x => new ProcessInfo(x))
             .ToArray();
     }

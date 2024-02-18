@@ -3,13 +3,7 @@
 public class Config
 {
     public int Port { get; set; }
-    public ProcessGroupConfig[] ProcessGroups { get; set; }
-}
-
-public class ProcessGroupConfig
-{
-    public string Name { get; set; }
-    public ProcessConfig[] Processes { get; set; }
+    public Dictionary<string, ProcessConfig[]> ProcessGroups { get; set; }
 }
 
 public class ProcessConfig
