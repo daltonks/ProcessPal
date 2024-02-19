@@ -23,12 +23,12 @@ I personally use it for running and debugging multiple code projects at once:
                 {
                     "FileName": "powershell.exe",
                     "Args": "-File example1.ps1",
-                    "RestartOnExit": true
+                    "RestartOnExit": false
                 },
                 {
                     "FileName": "powershell.exe",
                     "Args": "-File example2.ps1",
-                    "RestartOnExit": true
+                    "RestartOnExit": false
                 }
             ]
         }
