@@ -44,7 +44,10 @@ class ProcessInfo
             if (IsRunning)
             {
                 Process.Exited -= OnProcessExited;
-                Process.Kill(entireProcessTree: true);
+                if (!Process.CloseMainWindow())
+                {
+                    Process.Kill(entireProcessTree: true);
+                }
                 Process = null;
             }
             else
