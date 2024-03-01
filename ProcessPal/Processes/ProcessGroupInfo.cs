@@ -5,10 +5,10 @@ class ProcessGroupInfo
     private readonly ProcessInfo[] _processes;
     public bool AnyProcessesRunning => _processes.Any(x => x.IsRunning);
     
-    public ProcessGroupInfo(ProcessConfig[] processConfigs)
+    public ProcessGroupInfo(string name, ProcessConfig[] processConfigs)
     {
         _processes = processConfigs
-            .Select(x => new ProcessInfo(x))
+            .Select(x => new ProcessInfo(name, x))
             .ToArray();
     }
 

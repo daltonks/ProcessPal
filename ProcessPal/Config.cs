@@ -8,7 +8,7 @@ public class Config
 
 public class ProcessConfig
 {
-    public string FileName { get; set; }
+    public string ScriptPath { get; set; }
     public string Args { get; set; }
-    public bool RestartOnExit { get; set; }
+    public bool AutoRestart { get; set; }
 }

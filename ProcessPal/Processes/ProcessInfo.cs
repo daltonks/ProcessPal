@@ -1,19 +1,24 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace ProcessPal.Processes;
 
 class ProcessInfo
 {
+    private Process _process;
+    private CancellationTokenSource _processCancellationSource = new();
+
+    private readonly string _groupName;
     private readonly ProcessConfig _config;
     private readonly object _locker = new();
         
-    public ProcessInfo(ProcessConfig config)
+    public ProcessInfo(string groupName, ProcessConfig config)
     {
+        _groupName = groupName;
         _config = config;
     }
-        
-    public Process Process { get; private set; }
-    public bool IsRunning => Process != null;
+
+    public bool IsRunning => _process != null;
 
     public void Start()
     {
@@ -43,32 +48,58 @@ class ProcessInfo
         {
             if (IsRunning)
             {
-                Process.Exited -= OnProcessExited;
-                if (!Process.CloseMainWindow())
-                {
-                    Process.Kill(entireProcessTree: true);
-                }
-                Process = null;
+                var process = _process;
+                process.Exited -= OnProcessExited;
+                process.Kill(entireProcessTree: true);
+                _processCancellationSource.Cancel();
+                _process = null;
             }
             else
             {
                 var startInfo = new ProcessStartInfo
                 {
-                    FileName = _config.FileName,
-                    Arguments = _config.Args,
-                    UseShellExecute = true
+                    FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "powershell.exe" : "/bin/bash",
+                    Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"-File {_config.ScriptPath} {_config.Args}" : $"{_config.ScriptPath} {_config.Args}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
                 };
 
-                Process = Process.Start(startInfo);
-                Process!.EnableRaisingEvents = true;
-                Process.Exited += OnProcessExited;
+                _process = new Process { StartInfo = startInfo };
+                _process.EnableRaisingEvents = true;
+                _process.Exited += OnProcessExited;
+                _process.Start();
+
+                var cts = _processCancellationSource = new CancellationTokenSource();
+
+                StartForwardingOutput(_process.StandardOutput, Console.Out, cts);
+                StartForwardingOutput(_process.StandardError, Console.Error, cts);
             }
         }
     }
 
+    private void StartForwardingOutput(StreamReader reader, TextWriter writer, CancellationTokenSource cts)
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                while (!cts.IsCancellationRequested)
+                {
+                    var processLine = await reader.ReadLineAsync(cts.Token);
+                    var line = $"{_groupName} | {processLine}";
+                    await writer.WriteLineAsync(line);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        });
+    }
+
     private void OnProcessExited(object sender, EventArgs e)
     {
-        if (_config.RestartOnExit)
+        if (_config.AutoRestart)
         {
             lock (_locker)
             {

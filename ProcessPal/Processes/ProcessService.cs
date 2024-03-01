@@ -10,7 +10,7 @@ public class ProcessService
 
     public ProcessService(Config config)
     {
-        _processGroups = config.ProcessGroups?.ToDictionary(x => x.Key, x => new ProcessGroupInfo(x.Value)) 
+        _processGroups = config.ProcessGroups?.ToDictionary(x => x.Key, x => new ProcessGroupInfo(x.Key, x.Value)) 
                          ?? new Dictionary<string, ProcessGroupInfo>();
     }
 

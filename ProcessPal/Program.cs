@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Text.Json;
 using CommandLine;
-using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using ProcessPal.Generated;
 using ProcessPal.Processes;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace ProcessPal;
 
@@ -14,12 +14,13 @@ internal class Program
 {
     private static Config _config;
     
+    private static readonly IDeserializer _yamlDeserializer = new DeserializerBuilder()
+        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+        .Build();
+    
     public static int Main(string[] args)
     {
-        using (var fileStream = File.OpenRead(Path.Combine(AppContext.BaseDirectory, "_config.json")))
-        {
-            _config = JsonSerializer.Deserialize<Config>(fileStream);
-        }
+        _config = _yamlDeserializer.Deserialize<Config>(File.ReadAllText("_config.yaml"));
 
         return Parse(args);
     }
