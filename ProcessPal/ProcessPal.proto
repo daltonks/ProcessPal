@@ -4,24 +4,8 @@ option csharp_namespace = "ProcessPal.Generated";
 
 package automation;
 
-service ProcessController {
-  rpc ToggleProcessGroup (ToggleProcessGroupRequest) returns (ToggleProcessGroupResponse);
+service ProcessGroupController {
   rpc Shutdown (ShutdownRequest) returns (ShutdownResponse);
-}
-
-message ToggleProcessGroupRequest {
-  string name = 1;
-}
-
-message ToggleProcessGroupResponse {
-    ToggleProcessGroupStatus status = 1;
-}
-
-enum ToggleProcessGroupStatus {
-  Unknown = 0;
-  Started = 1;
-  Stopped = 2;
-  NotFound = 3;
 }
 
 message ShutdownRequest {

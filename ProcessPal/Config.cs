@@ -1,14 +1,20 @@
 ﻿namespace ProcessPal;
 
-public class Config
+public class Config : Dictionary<string, ProcessGroupConfig>
 {
-    public int Port { get; set; }
-    public Dictionary<string, ProcessConfig[]> ProcessGroups { get; set; }
+    
 }
 
-public class ProcessConfig
+public class ProcessGroupConfig
 {
-    public string ScriptPath { get; set; }
+    public int Port { get; set; }
+    public ScriptConfig[] Scripts { get; set; }
+}
+
+public class ScriptConfig
+{
+    public string Name { get; set; }
+    public string Path { get; set; }
     public string Args { get; set; }
     public bool AutoRestart { get; set; }
 }

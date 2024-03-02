@@ -3,26 +3,24 @@ using System.Runtime.InteropServices;
 
 namespace ProcessPal.Processes;
 
-class ProcessInfo
+internal class ProcessManager(
+    ScriptConfig config, 
+    ConsoleColor nameForeground,
+    ConsoleColor nameBackground, 
+    int namePadRight,
+    SemaphoreSlim outputLock
+)
 {
     private Process _process;
     private CancellationTokenSource _processCancellationSource = new();
 
-    private readonly string _groupName;
-    private readonly ProcessConfig _config;
-    private readonly object _locker = new();
-        
-    public ProcessInfo(string groupName, ProcessConfig config)
-    {
-        _groupName = groupName;
-        _config = config;
-    }
+    private readonly object _runningLock = new();
 
     public bool IsRunning => _process != null;
 
     public void Start()
     {
-        lock (_locker)
+        lock (_runningLock)
         {
             if (!IsRunning)
             {
@@ -33,7 +31,7 @@ class ProcessInfo
 
     public void Stop()
     {
-        lock (_locker)
+        lock (_runningLock)
         {
             if (IsRunning)
             {
@@ -44,7 +42,7 @@ class ProcessInfo
         
     public void Toggle()
     {
-        lock (_locker)
+        lock (_runningLock)
         {
             if (IsRunning)
             {
@@ -59,7 +57,7 @@ class ProcessInfo
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "powershell.exe" : "/bin/bash",
-                    Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"-File {_config.ScriptPath} {_config.Args}" : $"{_config.ScriptPath} {_config.Args}",
+                    Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"-File {config.Path} {config.Args}" : $"{config.Path} {config.Args}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true
                 };
@@ -71,13 +69,13 @@ class ProcessInfo
 
                 var cts = _processCancellationSource = new CancellationTokenSource();
 
-                StartForwardingOutput(_process.StandardOutput, Console.Out, cts);
-                StartForwardingOutput(_process.StandardError, Console.Error, cts);
+                StartForwardingOutput(_process.StandardOutput, isError: false, cts);
+                StartForwardingOutput(_process.StandardError, isError: true, cts);
             }
         }
     }
 
-    private void StartForwardingOutput(StreamReader reader, TextWriter writer, CancellationTokenSource cts)
+    private void StartForwardingOutput(StreamReader reader, bool isError, CancellationTokenSource cts)
     {
         _ = Task.Run(async () =>
         {
@@ -86,8 +84,30 @@ class ProcessInfo
                 while (!cts.IsCancellationRequested)
                 {
                     var processLine = await reader.ReadLineAsync(cts.Token);
-                    var line = $"{_groupName} | {processLine}";
-                    await writer.WriteLineAsync(line);
+
+                    await outputLock.WaitAsync();
+                    try
+                    {
+                        Console.BackgroundColor = nameBackground;
+                        Console.ForegroundColor = nameForeground;
+                        Console.Write($"{config.Name.PadRight(namePadRight)} |");
+
+                        Console.ResetColor();
+                        if (isError)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                        }
+
+                        Console.WriteLine($" {processLine}");
+                        if (isError)
+                        {
+                            Console.ResetColor();
+                        }
+                    }
+                    finally
+                    {
+                        outputLock.Release();
+                    }
                 }
             }
             catch (Exception)
@@ -99,9 +119,9 @@ class ProcessInfo
 
     private void OnProcessExited(object sender, EventArgs e)
     {
-        if (_config.AutoRestart)
+        if (config.AutoRestart)
         {
-            lock (_locker)
+            lock (_runningLock)
             {
                 Stop();
                 Start();
