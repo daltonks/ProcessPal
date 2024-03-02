@@ -48,30 +48,65 @@ internal class ProcessManager(
             {
                 _process.Exited -= OnProcessExited;
                 _process.Kill(entireProcessTree: true);
+
+                if (!string.IsNullOrWhiteSpace(config.CleanupScript?.Path))
+                {
+                    var shutdownProcess = StartProcess(
+                        config.CleanupScript.Path, 
+                        config.CleanupScript.Args, 
+                        config.CleanupScript.EnvPath, 
+                        (_, _) => {}, 
+                        _outputCancellationSource);
+                    shutdownProcess.WaitForExit();
+                }
+                
                 _outputCancellationSource.Cancel();
+                
                 _process = null;
             }
             else
             {
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "powershell.exe" : "/bin/bash",
-                    Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"-File {config.Path} {config.Args}" : $"{config.Path} {config.Args}",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                };
-
-                _process = new Process { StartInfo = startInfo };
-                _process.EnableRaisingEvents = true;
-                _process.Exited += OnProcessExited;
-                _process.Start();
-
-                var cts = _outputCancellationSource = new CancellationTokenSource();
-
-                StartForwardingOutput(_process.StandardOutput, isError: false, cts);
-                StartForwardingOutput(_process.StandardError, isError: true, cts);
+                _outputCancellationSource = new CancellationTokenSource();
+                _process = StartProcess(config.Path, config.Args, config.EnvPath, OnProcessExited, _outputCancellationSource);
             }
         }
+    }
+
+    private Process StartProcess(
+        string path, 
+        string args, 
+        string envPath,
+        EventHandler exited,
+        CancellationTokenSource outputCancellationSource)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "powershell.exe" : "/bin/bash",
+            Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"-File {path} {args}" : $"{path} {args}",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+                
+        if (!string.IsNullOrWhiteSpace(envPath))
+        {
+            var environmentVariables = File.ReadAllLines(envPath)
+                .Select(l => l.Split('=', 2, StringSplitOptions.TrimEntries))
+                .ToDictionary(s => s[0], s => s[1]);
+            foreach (var environmentVariable in environmentVariables)
+            {
+                startInfo.Environment[environmentVariable.Key] = environmentVariable.Value;
+            }
+        }
+                
+        var process = new Process { StartInfo = startInfo };
+        process.EnableRaisingEvents = true;
+        process.Exited += exited;
+        process.Start();
+
+        StartForwardingOutput(process.StandardOutput, isError: false, outputCancellationSource);
+        StartForwardingOutput(process.StandardError, isError: true, outputCancellationSource);
+
+        return process;
     }
 
     private void StartForwardingOutput(StreamReader reader, bool isError, CancellationTokenSource outputCancellationSource)
