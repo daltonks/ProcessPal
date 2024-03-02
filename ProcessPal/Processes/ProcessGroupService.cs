@@ -8,10 +8,9 @@ public class ProcessGroupService
         (ConsoleColor.Yellow,      ConsoleColor.Black),
         (ConsoleColor.Cyan,        ConsoleColor.Black),
         (ConsoleColor.Magenta,     ConsoleColor.Black),
+        (ConsoleColor.White,       ConsoleColor.Black),
         (ConsoleColor.Green,       ConsoleColor.Black),
         (ConsoleColor.DarkCyan,    ConsoleColor.Black),
-        (ConsoleColor.White,       ConsoleColor.Black),
-        (ConsoleColor.DarkYellow,  ConsoleColor.Black),
         (ConsoleColor.Gray,        ConsoleColor.Black),
         (ConsoleColor.Blue,        ConsoleColor.Black)
     };

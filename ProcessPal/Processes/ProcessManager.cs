@@ -12,11 +12,11 @@ internal class ProcessManager(
 )
 {
     private Process _process;
-    private CancellationTokenSource _processCancellationSource = new();
+    private CancellationTokenSource _outputCancellationSource = new();
 
     private readonly object _runningLock = new();
 
-    public bool IsRunning => _process != null;
+    private bool IsRunning => _process != null;
 
     public void Start()
     {
@@ -46,10 +46,9 @@ internal class ProcessManager(
         {
             if (IsRunning)
             {
-                var process = _process;
-                process.Exited -= OnProcessExited;
-                process.Kill(entireProcessTree: true);
-                _processCancellationSource.Cancel();
+                _process.Exited -= OnProcessExited;
+                _process.Kill(entireProcessTree: true);
+                _outputCancellationSource.Cancel();
                 _process = null;
             }
             else
@@ -67,7 +66,7 @@ internal class ProcessManager(
                 _process.Exited += OnProcessExited;
                 _process.Start();
 
-                var cts = _processCancellationSource = new CancellationTokenSource();
+                var cts = _outputCancellationSource = new CancellationTokenSource();
 
                 StartForwardingOutput(_process.StandardOutput, isError: false, cts);
                 StartForwardingOutput(_process.StandardError, isError: true, cts);
@@ -75,16 +74,16 @@ internal class ProcessManager(
         }
     }
 
-    private void StartForwardingOutput(StreamReader reader, bool isError, CancellationTokenSource cts)
+    private void StartForwardingOutput(StreamReader reader, bool isError, CancellationTokenSource outputCancellationSource)
     {
         _ = Task.Run(async () =>
         {
             try
             {
-                while (!cts.IsCancellationRequested)
+                while (!outputCancellationSource.IsCancellationRequested)
                 {
-                    var processLine = await reader.ReadLineAsync(cts.Token);
-
+                    var processLine = await reader.ReadLineAsync(outputCancellationSource.Token);
+                    
                     await outputLock.WaitAsync();
                     try
                     {

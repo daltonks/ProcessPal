@@ -87,7 +87,12 @@ internal class Program
 
         var processGroupService = app.Services.GetRequiredService<ProcessGroupService>();
         processGroupService.Start(processGroupConfig);
-            
+        
+        app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
+        {
+            processGroupService.Stop();
+        });
+        
         app.Run();
 
         return true;
