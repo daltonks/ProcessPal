@@ -12,7 +12,6 @@ internal class ProcessManager(
 )
 {
     private Process _process;
-    private CancellationTokenSource _outputCancellationSource = new();
 
     private readonly object _runningLock = new();
 
@@ -47,6 +46,7 @@ internal class ProcessManager(
             if (IsRunning)
             {
                 _process.Exited -= OnProcessExited;
+
                 _process.Kill(entireProcessTree: true);
 
                 if (!string.IsNullOrWhiteSpace(config.CleanupScript?.Path))
@@ -55,19 +55,15 @@ internal class ProcessManager(
                         config.CleanupScript.Path, 
                         config.CleanupScript.Args, 
                         config.CleanupScript.EnvPath, 
-                        (_, _) => {}, 
-                        _outputCancellationSource);
+                        (_, _) => {});
                     shutdownProcess.WaitForExit();
                 }
-                
-                _outputCancellationSource.Cancel();
                 
                 _process = null;
             }
             else
             {
-                _outputCancellationSource = new CancellationTokenSource();
-                _process = StartProcess(config.Path, config.Args, config.EnvPath, OnProcessExited, _outputCancellationSource);
+                _process = StartProcess(config.Path, config.Args, config.EnvPath, OnProcessExited);
             }
         }
     }
@@ -76,8 +72,7 @@ internal class ProcessManager(
         string path, 
         string args, 
         string envPath,
-        EventHandler exited,
-        CancellationTokenSource outputCancellationSource)
+        EventHandler exited)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -100,55 +95,52 @@ internal class ProcessManager(
                 
         var process = new Process { StartInfo = startInfo };
         process.EnableRaisingEvents = true;
+        process.OutputDataReceived += (sender, eventArgs) =>
+        {
+            ForwardOutput(eventArgs.Data, isError: false);
+        };
+        process.ErrorDataReceived += (sender, eventArgs) =>
+        {
+            ForwardOutput(eventArgs.Data, isError: true);
+        };
         process.Exited += exited;
         process.Start();
-
-        StartForwardingOutput(process.StandardOutput, isError: false, outputCancellationSource);
-        StartForwardingOutput(process.StandardError, isError: true, outputCancellationSource);
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
 
         return process;
     }
 
-    private void StartForwardingOutput(StreamReader reader, bool isError, CancellationTokenSource outputCancellationSource)
+    private async void ForwardOutput(string line, bool isError)
     {
-        _ = Task.Run(async () =>
+        if(string.IsNullOrWhiteSpace(line))
         {
-            try
-            {
-                while (!outputCancellationSource.IsCancellationRequested)
-                {
-                    var processLine = await reader.ReadLineAsync(outputCancellationSource.Token);
-                    
-                    await outputLock.WaitAsync();
-                    try
-                    {
-                        Console.BackgroundColor = nameBackground;
-                        Console.ForegroundColor = nameForeground;
-                        Console.Write($"{config.Name.PadRight(namePadRight)} |");
+            return;
+        }
+        
+        await outputLock.WaitAsync();
+        try
+        {
+            Console.BackgroundColor = nameBackground;
+            Console.ForegroundColor = nameForeground;
+            Console.Write($"{config.Name.PadRight(namePadRight)} |");
 
-                        Console.ResetColor();
-                        if (isError)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                        }
-
-                        Console.WriteLine($" {processLine}");
-                        if (isError)
-                        {
-                            Console.ResetColor();
-                        }
-                    }
-                    finally
-                    {
-                        outputLock.Release();
-                    }
-                }
-            }
-            catch (Exception)
+            Console.ResetColor();
+            if (isError)
             {
-                // ignored
+                Console.ForegroundColor = ConsoleColor.Red;
             }
-        });
+
+            Console.WriteLine($" {line}");
+            if (isError)
+            {
+                Console.ResetColor();
+            }
+        }
+        finally
+        {
+            outputLock.Release();
+        }
     }
 
     private void OnProcessExited(object sender, EventArgs e)
