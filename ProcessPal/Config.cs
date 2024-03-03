@@ -1,10 +1,5 @@
 ﻿namespace ProcessPal;
 
-public class Config : Dictionary<string, ProcessGroupConfig>
-{
-    
-}
-
 public class ProcessGroupConfig
 {
     public int Port { get; set; }

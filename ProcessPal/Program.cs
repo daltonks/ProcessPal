@@ -12,7 +12,7 @@ namespace ProcessPal;
 
 internal class Program
 {
-    private static Config _config;
+    private static ProcessGroupConfig _config;
     
     public static int Main(string[] args)
     {
@@ -25,8 +25,8 @@ internal class Program
             _config = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build()
-                .Deserialize<Config>(File.ReadAllText(options.ConfigPath));
-            result = ToggleProcessGroup(options.Name) ? 0 : 1;
+                .Deserialize<ProcessGroupConfig>(File.ReadAllText(options.ConfigPath));
+            result = ToggleProcessGroup(Path.GetFileNameWithoutExtension(options.ConfigPath)) ? 0 : 1;
         });
 
         return result;
@@ -34,13 +34,7 @@ internal class Program
 
     private static bool ToggleProcessGroup(string name)
     {
-        if (!_config.TryGetValue(name, out var processGroupConfig))
-        {
-            Console.Error.WriteLine($"Couldn't find process group \"{name}\"");
-            return false;
-        }
-
-        var port = processGroupConfig.Port;
+        var port = _config.Port;
         
         var portIsInUse = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners()
             .Any(x => x.Port == port);
@@ -50,7 +44,7 @@ internal class Program
             try
             {
                 Send(port, client => client.Shutdown(new ShutdownRequest()));
-                Console.WriteLine($"Stopping process group \"{name}\"");
+                Console.WriteLine($"Stopped process group \"{name}\"");
                 return true;
             }
             catch (Exception ex)
@@ -80,7 +74,7 @@ internal class Program
         app.MapGrpcService<ProcessGroupControllerImpl>();
 
         var processGroupService = app.Services.GetRequiredService<ProcessGroupService>();
-        processGroupService.Start(processGroupConfig);
+        processGroupService.Start(_config);
         
         app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
         {
