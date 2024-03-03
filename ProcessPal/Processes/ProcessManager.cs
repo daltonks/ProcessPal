@@ -89,9 +89,9 @@ internal class ProcessManager(
 
         if (scriptProvided)
         {
-            path = Path.GetTempFileName();
+            var extension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".ps1" : ".sh";
+            path = Path.GetTempFileName() + extension;
             File.WriteAllText(path, scriptConfig.Script);
-            File.Move(path, RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"{script}.ps1" : $"{script}.sh");
         }
 
         var pathAndArgs = Path.IsPathFullyQualified(path) 
