@@ -10,6 +10,9 @@ namespace ProcessPal;
                "If the process group is not running, the group and its processes will be started.")]
 public class ToggleGroupOptions
 {
+    [Option('c', "config-path", Required = true, HelpText = "The path to the config yaml.")]
+    public string ConfigPath { get; set; }
+    
     [Option('n', "name", Required = true, HelpText = "The name of the process group to toggle.")]
     public string Name { get; set; }
 }

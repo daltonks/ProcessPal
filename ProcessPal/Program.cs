@@ -16,22 +16,16 @@ internal class Program
     
     public static int Main(string[] args)
     {
-        _config = new DeserializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build()
-            .Deserialize<Config>(File.ReadAllText("_config.yaml"));
-
-        return Parse(args);
-    }
-
-    private static int Parse(IEnumerable<string> args)
-    {
         var result = 0;
         
         var parserResult = Parser.Default.ParseArguments(args, typeof(ToggleGroupOptions));
 
         parserResult.WithParsed<ToggleGroupOptions>(options =>
         {
+            _config = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build()
+                .Deserialize<Config>(File.ReadAllText(options.ConfigPath));
             result = ToggleProcessGroup(options.Name) ? 0 : 1;
         });
 

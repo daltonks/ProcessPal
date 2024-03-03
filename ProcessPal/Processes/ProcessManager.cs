@@ -51,33 +51,62 @@ internal class ProcessManager(
 
                 if (!string.IsNullOrWhiteSpace(config.CleanupScript?.Path))
                 {
-                    var shutdownProcess = StartProcess(
-                        config.CleanupScript.Path, 
-                        config.CleanupScript.Args, 
-                        config.CleanupScript.EnvPath, 
-                        (_, _) => {});
-                    shutdownProcess.WaitForExit();
+                    var shutdownProcess = StartProcess(config.CleanupScript, (_, _) => {});
+                    shutdownProcess?.WaitForExit();
                 }
                 
                 _process = null;
             }
             else
             {
-                _process = StartProcess(config.Path, config.Args, config.EnvPath, OnProcessExited);
+                _process = StartProcess(config, OnProcessExited);
             }
         }
     }
 
-    private Process StartProcess(
-        string path, 
-        string args, 
-        string envPath,
-        EventHandler exited)
+    private Process StartProcess(IScriptConfig scriptConfig, EventHandler exited)
     {
+        var envPath = scriptConfig.EnvPath;
+        var env = scriptConfig.Env;
+        var script = scriptConfig.Script;
+        var path = scriptConfig.Path;
+        var args = scriptConfig.Args;
+
+        var scriptProvided = !string.IsNullOrWhiteSpace(script);
+        var pathProvided = !string.IsNullOrWhiteSpace(path);
+        
+        if (scriptProvided && pathProvided)
+        {
+            Console.Error.WriteLine($"Error: Both `script` and `path` properties have been provided for script \"{config.Name}\" or its cleanup script. This is not supported.");
+            return null;
+        }
+        
+        if (!scriptProvided && !pathProvided)
+        {
+            Console.Error.WriteLine($"Error: No `script` or `path` properties provided for script \"{config.Name}\" or its cleanup script.");
+            return null;
+        }
+
+        if (scriptProvided)
+        {
+            path = Path.GetTempFileName();
+            File.WriteAllText(path, scriptConfig.Script);
+            File.Move(path, RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"{script}.ps1" : $"{script}.sh");
+        }
+
+        var pathAndArgs = Path.IsPathFullyQualified(path) 
+            ? $"{path} {args}" 
+            : $"\"{Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path))}\" {args}";
+
+        var arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? $"-File {pathAndArgs}"
+            : pathAndArgs;
+        
         var startInfo = new ProcessStartInfo
         {
             FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "powershell.exe" : "/bin/bash",
-            Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"-File {path} {args}" : $"{path} {args}",
+            Arguments = arguments,
+            WorkingDirectory = string.IsNullOrWhiteSpace(config.WorkDir) ? "" : config.WorkDir,
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };
@@ -88,6 +117,14 @@ internal class ProcessManager(
                 .Select(l => l.Split('=', 2, StringSplitOptions.TrimEntries))
                 .ToDictionary(s => s[0], s => s[1]);
             foreach (var environmentVariable in environmentVariables)
+            {
+                startInfo.Environment[environmentVariable.Key] = environmentVariable.Value;
+            }
+        }
+        
+        if(env is not null)
+        {
+            foreach (var environmentVariable in env)
             {
                 startInfo.Environment[environmentVariable.Key] = environmentVariable.Value;
             }
