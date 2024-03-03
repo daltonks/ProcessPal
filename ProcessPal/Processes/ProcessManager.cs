@@ -11,12 +11,12 @@ internal class ProcessManager(
     SemaphoreSlim outputLock
 )
 {
+    private static readonly string[] NewlineSeparators = { "\r\n", "\r", "\n" };
+    
     private Process _process;
-
     private readonly object _runningLock = new();
-
     private bool IsRunning => _process != null;
-
+    
     public void Start()
     {
         lock (_runningLock)
@@ -66,14 +66,14 @@ internal class ProcessManager(
 
     private Process StartProcess(IScriptConfig scriptConfig, EventHandler exited)
     {
+        var scriptProvided = !string.IsNullOrWhiteSpace(scriptConfig.Script);
+        var pathProvided = !string.IsNullOrWhiteSpace(scriptConfig.Path);
+        
         var envPath = scriptConfig.EnvPath;
         var env = scriptConfig.Env;
         var script = scriptConfig.Script;
         var path = scriptConfig.Path;
         var args = scriptConfig.Args;
-
-        var scriptProvided = !string.IsNullOrWhiteSpace(script);
-        var pathProvided = !string.IsNullOrWhiteSpace(path);
         
         if (scriptProvided && pathProvided)
         {
@@ -86,21 +86,19 @@ internal class ProcessManager(
             Console.Error.WriteLine($"Error: No `script` or `path` properties provided for script \"{config.Name}\" or its cleanup script.");
             return null;
         }
-
-        if (scriptProvided)
-        {
-            var extension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".ps1" : ".sh";
-            path = Path.GetTempFileName() + extension;
-            File.WriteAllText(path, scriptConfig.Script);
-        }
-
-        var pathAndArgs = Path.IsPathFullyQualified(path) 
-            ? $"{path} {args}" 
-            : $"\"{Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path))}\" {args}";
+        
+        var templatedLines = scriptProvided 
+            ? script.Split(NewlineSeparators, StringSplitOptions.None) 
+            : File.ReadAllLines(path);
+        var lines = ProcessTemplate(templatedLines);
+        var extension = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".ps1" : ".sh";
+        var tempPath = Path.GetTempFileName() + extension;
+        File.WriteAllLines(tempPath, lines);
+        path = tempPath;
 
         var arguments = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? $"-File {pathAndArgs}"
-            : pathAndArgs;
+            ? $"-File {path} {args}"
+            : $"{path} {args}" ;
         
         var startInfo = new ProcessStartInfo
         {
@@ -110,7 +108,7 @@ internal class ProcessManager(
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };
-                
+        
         if (!string.IsNullOrWhiteSpace(envPath))
         {
             var environmentVariables = File.ReadAllLines(envPath)
@@ -122,14 +120,14 @@ internal class ProcessManager(
             }
         }
         
-        if(env is not null)
+        if (env is not null)
         {
             foreach (var environmentVariable in env)
             {
                 startInfo.Environment[environmentVariable.Key] = environmentVariable.Value;
             }
         }
-                
+        
         var process = new Process { StartInfo = startInfo };
         process.EnableRaisingEvents = true;
         process.OutputDataReceived += (sender, eventArgs) =>
@@ -146,6 +144,42 @@ internal class ProcessManager(
         process.BeginErrorReadLine();
 
         return process;
+    }
+
+    private static IEnumerable<string> ProcessTemplate(IEnumerable<string> templatedLines)
+    {
+        foreach (var line in templatedLines)
+        {
+            var outputLine = line;
+            while (true)
+            {
+                var templateStart = outputLine.IndexOf("${{", StringComparison.Ordinal);
+                var templateEnd = outputLine.IndexOf("}}", StringComparison.Ordinal);
+                if (templateStart >= 0 && templateEnd > templateStart)
+                {
+                    var start = templateStart + 3;
+                    var end = templateEnd;
+                    var value = outputLine.Substring(start, end - start);
+                    var trimmedValue = value.Trim();
+                    var replacement = "";
+                    if(trimmedValue.StartsWith("env.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var envVariableName = trimmedValue.Substring(4);
+                        
+                        replacement = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
+                            ? $"$Env:{envVariableName}" 
+                            : $"${envVariableName}";
+                    }
+                    outputLine = outputLine.Replace("${{" + value + "}}", replacement);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            yield return outputLine;
+        }
     }
 
     private async void ForwardOutput(string line, bool isError)
