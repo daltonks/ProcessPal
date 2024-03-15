@@ -11,8 +11,7 @@ public class ProcessGroupService
         (ConsoleColor.White,       ConsoleColor.Black),
         (ConsoleColor.Green,       ConsoleColor.Black),
         (ConsoleColor.DarkCyan,    ConsoleColor.Black),
-        (ConsoleColor.Gray,        ConsoleColor.Black),
-        (ConsoleColor.Blue,        ConsoleColor.Black)
+        (ConsoleColor.Gray,        ConsoleColor.Black)
     };
     
     private readonly SemaphoreSlim _outputLock = new(1, 1);
