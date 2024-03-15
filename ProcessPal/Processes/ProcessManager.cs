@@ -49,7 +49,7 @@ internal class ProcessManager(
 
                 _process.Kill(entireProcessTree: true);
 
-                if (!string.IsNullOrWhiteSpace(config.CleanupScript?.Path))
+                if (!string.IsNullOrWhiteSpace(config.CleanupScript?.ScriptPath))
                 {
                     var shutdownProcess = StartProcess(config.CleanupScript, (_, _) => {});
                     shutdownProcess?.WaitForExit();
@@ -67,12 +67,12 @@ internal class ProcessManager(
     private Process StartProcess(IScriptConfig scriptConfig, EventHandler exited)
     {
         var scriptProvided = !string.IsNullOrWhiteSpace(scriptConfig.Script);
-        var pathProvided = !string.IsNullOrWhiteSpace(scriptConfig.Path);
+        var pathProvided = !string.IsNullOrWhiteSpace(scriptConfig.ScriptPath);
         
         var envPath = scriptConfig.EnvPath;
         var env = scriptConfig.Env;
         var script = scriptConfig.Script;
-        var path = scriptConfig.Path;
+        var path = scriptConfig.ScriptPath;
         var args = scriptConfig.Args;
         
         if (scriptProvided && pathProvided)
@@ -104,7 +104,6 @@ internal class ProcessManager(
         {
             FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "powershell.exe" : "/bin/bash",
             Arguments = arguments,
-            WorkingDirectory = string.IsNullOrWhiteSpace(config.WorkDir) ? "" : config.WorkDir,
             RedirectStandardOutput = true,
             RedirectStandardError = true
         };

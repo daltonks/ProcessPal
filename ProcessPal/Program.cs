@@ -53,7 +53,7 @@ internal class Program
                 Console.Error.WriteLine();
                 Console.Error.WriteLine($"Port {port} is in use, but the process group server is not responding. " +
                                         $"Maybe the port is being used by another process. " +
-                                        $"Try changing its port in _config.yaml.");
+                                        $"Try changing its port in the config yaml.");
                 return false;
             }
         }
