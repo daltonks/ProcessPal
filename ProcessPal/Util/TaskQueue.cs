@@ -4,7 +4,7 @@ namespace ProcessPal.Util
 {
     public class TaskQueue
     {
-        private readonly SemaphoreSlim _semaphore = new(1, 1);
+        private readonly object _locker = new();
         private volatile Task _lastTask = Task.CompletedTask;
 
         public async Task<T> QueueAsync<T>(Func<T> function)
@@ -37,10 +37,9 @@ namespace ProcessPal.Util
             });
         }
         
-        public async Task QueueAsync(Func<Task> asyncAction)
+        public Task QueueAsync(Func<Task> asyncAction)
         {
-            await _semaphore.WaitAsync();
-            try
+            lock(_locker)
             {
                 _lastTask = _lastTask.ContinueWith(
                     async _ =>
@@ -57,11 +56,7 @@ namespace ProcessPal.Util
                     TaskContinuationOptions.RunContinuationsAsynchronously
                 ).Unwrap();
                 
-                await _lastTask;
-            }
-            finally
-            {
-                _semaphore.Release();
+                return _lastTask;
             }
         }
     }
