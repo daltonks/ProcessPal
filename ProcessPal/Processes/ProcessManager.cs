@@ -1,15 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using ProcessPal.Util;
 
 namespace ProcessPal.Processes;
+
+public delegate void DataReceived(string data);
 
 internal class ProcessManager(
     ScriptConfig config, 
     ConsoleColor nameForeground,
-    ConsoleColor nameBackground, 
-    int namePadRight,
-    TaskQueue outputTaskQueue
+    ConsoleColor nameBackground
 )
 {
     private static readonly string[] NewlineSeparators = { "\r\n", "\r", "\n" };
@@ -17,6 +16,12 @@ internal class ProcessManager(
     private Process _process;
     private readonly object _runningLock = new();
     private bool IsRunning => _process != null;
+
+    public event DataReceived OutputDataReceived;
+    public event DataReceived ErrorDataReceived;
+    public string Name => config.Name;
+    public ConsoleColor NameForeground => nameForeground;
+    public ConsoleColor NameBackground => nameBackground;
     
     public void Start()
     {
@@ -132,11 +137,11 @@ internal class ProcessManager(
         process.EnableRaisingEvents = true;
         process.OutputDataReceived += (sender, eventArgs) =>
         {
-            ForwardOutput(eventArgs.Data, isError: false);
+            OutputDataReceived?.Invoke(eventArgs.Data);
         };
         process.ErrorDataReceived += (sender, eventArgs) =>
         {
-            ForwardOutput(eventArgs.Data, isError: true);
+            ErrorDataReceived?.Invoke(eventArgs.Data);
         };
         process.Exited += exited;
         process.Start();
@@ -180,33 +185,6 @@ internal class ProcessManager(
 
             yield return outputLine;
         }
-    }
-
-    private async void ForwardOutput(string line, bool isError)
-    {
-        if(string.IsNullOrWhiteSpace(line))
-        {
-            return;
-        }
-
-        _ = outputTaskQueue.QueueAsync(() =>
-        {
-            Console.BackgroundColor = nameBackground;
-            Console.ForegroundColor = nameForeground;
-            Console.Write($"{config.Name.PadRight(namePadRight)} |");
-
-            Console.ResetColor();
-            if (isError)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-            }
-
-            Console.WriteLine($" {line}");
-            if (isError)
-            {
-                Console.ResetColor();
-            }
-        });
     }
 
     private void OnProcessExited(object sender, EventArgs e)
