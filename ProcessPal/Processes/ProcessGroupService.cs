@@ -1,4 +1,6 @@
-﻿namespace ProcessPal.Processes;
+﻿using ProcessPal.Util;
+
+namespace ProcessPal.Processes;
 
 public class ProcessGroupService
 {
@@ -14,7 +16,7 @@ public class ProcessGroupService
         (ConsoleColor.Gray,        ConsoleColor.Black)
     };
     
-    private readonly SemaphoreSlim _outputLock = new(1, 1);
+    private readonly TaskQueue _outputTaskQueue = new();
     
     public void Start(ProcessGroupConfig config)
     {
@@ -28,7 +30,7 @@ public class ProcessGroupService
                     colors.Item1,
                     colors.Item2,
                     namePadRight: maxNameLength,
-                    _outputLock);
+                    _outputTaskQueue);
             })
             .ToArray();
         

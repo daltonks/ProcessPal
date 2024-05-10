@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using ProcessPal.Util;
 
 namespace ProcessPal.Processes;
 
@@ -8,7 +9,7 @@ internal class ProcessManager(
     ConsoleColor nameForeground,
     ConsoleColor nameBackground, 
     int namePadRight,
-    SemaphoreSlim outputLock
+    TaskQueue outputTaskQueue
 )
 {
     private static readonly string[] NewlineSeparators = { "\r\n", "\r", "\n" };
@@ -187,9 +188,8 @@ internal class ProcessManager(
         {
             return;
         }
-        
-        await outputLock.WaitAsync();
-        try
+
+        _ = outputTaskQueue.QueueAsync(() =>
         {
             Console.BackgroundColor = nameBackground;
             Console.ForegroundColor = nameForeground;
@@ -206,11 +206,7 @@ internal class ProcessManager(
             {
                 Console.ResetColor();
             }
-        }
-        finally
-        {
-            outputLock.Release();
-        }
+        });
     }
 
     private void OnProcessExited(object sender, EventArgs e)
